@@ -1,0 +1,23 @@
+import pandas as pd
+import numpy as np
+df = pd.read_csv("Q31_bus_punctuality.csv")
+print(df.head())
+print(df.info())
+print("Missing Values:")
+print(df.isnull().sum())
+df = df.drop_duplicates()
+df["scheduled_arrival"] = pd.to_datetime(df["scheduled_arrival"])
+print(df["scheduled_arrival"])
+df["actual_arrival"] = pd.to_datetime(df["actual_arrival"])
+print(df["actual_arrival"])
+df["delay_in_minutes"] = (df["actual_arrival"] - df["scheduled_arrival"]).dt.total_seconds() / 60
+print(df["delay_in_minutes"])
+df["punctuality"] = np.where(df["delay_in_minutes"] <= 5,"On Time","Delayed")
+print(df["punctuality"])
+route_delay = df.groupby("route_number")["delay_in_minutes"].mean()
+print("Average Delay by Route:")
+print(route_delay)
+print("Routes with high average delays:")
+print(route_delay[route_delay > 10])
+print("Final Dataset:")
+print(df)
